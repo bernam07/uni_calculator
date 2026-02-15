@@ -19,7 +19,6 @@ def extrair_notas_do_pdf(caminho):
             for linha in text.split('\n'):
                 if "Aprovado" in linha:
                     try:
-                        # A MESMA LÓGICA QUE JÁ TINHAS
                         match_nota = re.search(r'(\d{2}\.\d{2})', linha) or re.search(r'\s(\d{2})\s', linha)
                         match_ects = re.search(r'\s(6|12|18|30)\s', linha)
                         nome = re.sub(r'\[.*?\]|\d{4,}-\d{2}|Aprovado.*', '', linha).strip()
