@@ -3,68 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora Média IPCA Online</title>
+    <title>Calculadora Média Ensino Superior</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .main-header { background-color: #ffffff; border-bottom: 1px solid #dee2e6; padding: 2rem 0; margin-bottom: 2rem; }
+        .card { border: 1px solid #dee2e6; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .result-box { background-color: #343a40; color: white; border-radius: 6px; padding: 20px; text-align: center; }
+        .ad-space { background-color: #e9ecef; color: #6c757d; display: flex; align-items: center; justify-content: center; height: 250px; border: 1px dashed #ced4da; }
+        .premium-tag { background-color: #ffc107; color: #212529; font-size: 0.75rem; padding: 2px 6px; border-radius: 3px; font-weight: 600; margin-left: 5px; }
+    </style>
+</head>
+<body>
 
-    </head>
-<body class="bg-light">
+    <div class="main-header text-center">
+        <div class="container">
+            <h1 class="h3 mb-0 text-dark">Calculadora Média Ensino Superior</h1>
+            <p class="text-muted small mt-2">Ferramenta universal para cálculo de média ponderada</p>
+        </div>
+    </div>
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-lg-8">
                 
-                <div class="alert alert-secondary text-center">
-                    Espaço para Banner de Publicidade (Top)
+                <div class="alert alert-light text-center border mb-4">
+                    <small class="text-muted">Espaço Publicitário</small>
                 </div>
 
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white">
-                        <h3>🎓 Calculadora IPCA Online</h3>
+                <div class="card mb-4">
+                    <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold">Unidades Curriculares</h6>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="limparTudo()">Limpar Dados</button>
                     </div>
-                    <div class="card-body">
-                        <p>Faz upload do teu PDF de notas ("Consulta de Notas") e descobre a tua média instantaneamente.</p>
-                        
-                        <form method="post" enctype="multipart/form-data" class="mb-4">
-                            <div class="mb-3">
-                                <input type="file" name="pdf_file" class="form-control" accept=".pdf" required>
-                            </div>
-                            <button type="submit" class="btn btn-success w-100">Calcular Média Agora</button>
-                        </form>
-
-                        {% if media %}
-                        <div class="alert alert-success text-center">
-                            <h1>Média: {{ media }}</h1>
-                            <p>Baseado em {{ disciplines|length }} disciplinas aprovadas.</p>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0" id="tabela-notas">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 45%; padding-left: 20px;">Disciplina</th>
+                                        <th style="width: 20%">Nota (0-20)</th>
+                                        <th style="width: 20%">ECTS</th>
+                                        <th style="width: 15%"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lista-disciplinas">
+                                    </tbody>
+                            </table>
                         </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <button class="btn btn-primary w-100" onclick="adicionarLinha()">Adicionar Disciplina</button>
+                    </div>
+                </div>
+            </div>
 
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Disciplina</th>
-                                    <th>Nota</th>
-                                    <th>ECTS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for d in disciplinas %}
-                                <tr>
-                                    <td>{{ d.disciplina }}</td>
-                                    <td>{{ d.nota }}</td>
-                                    <td>{{ d.ects }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% endif %}
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h6 class="text-uppercase text-muted small mb-3">Resumo Atual</h6>
+                        <div class="result-box mb-3">
+                            <h2 class="display-4 fw-bold mb-0" id="display-media">---</h2>
+                            <small id="detalhes-ects" class="text-light opacity-75">Total ECTS: 0</small>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-dark" onclick="abrirModalPremium()">
+                                Importar PDF <span class="premium-tag">PRO</span>
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="exportarCSV()">
+                                Exportar Excel (CSV)
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="alert alert-secondary text-center mt-3">
-                    Espaço para Banner de Publicidade (Bottom)
+                <div class="card mb-4">
+                    <div class="card-body p-0">
+                        <div class="ad-space">
+                            <small>Publicidade (Lateral)</small>
+                        </div>
+                    </div>
                 </div>
-
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modalPremium" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title h6">Funcionalidades Premium</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-3">A importação automática de pautas (PDF) está disponível para instituições específicas.</p>
+                    <p class="small text-muted mb-4">Selecione a sua instituição para verificar a disponibilidade do importador automático.</p>
+                    
+                    <select class="form-select mb-3">
+                        <option selected>Escolher Instituição...</option>
+                        <option value="ipca">IPCA - Politécnico do Cávado e do Ave</option>
+                        <option value="up">Universidade do Porto</option>
+                        <option value="ul">Universidade de Lisboa</option>
+                        <option value="outra">Outra</option>
+                    </select>
+
+                    <div class="d-grid">
+                        <button class="btn btn-primary" onclick="alert('Funcionalidade em desenvolvimento. Brevemente disponível.')">Verificar Disponibilidade</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarDados();
+            if (document.getElementById('lista-disciplinas').children.length === 0) {
+                adicionarLinha();
+            }
+            calcularMedia();
+        });
+
+        function adicionarLinha(nome='', nota='', ects='') {
+            const tbody = document.getElementById('lista-disciplinas');
+            const row = document.createElement('tr');
+            
+            row.innerHTML = `
+                <td style="padding-left: 20px;"><input type="text" class="form-control form-control-sm" placeholder="Nome da Unidade" value="${nome}" oninput="salvarDados()"></td>
+                <td><input type="number" class="form-control form-control-sm" placeholder="0-20" min="0" max="20" value="${nota}" oninput="calcularMedia(); salvarDados()"></td>
+                <td><input type="number" class="form-control form-control-sm" placeholder="Ex: 6" min="1" value="${ects}" oninput="calcularMedia(); salvarDados()"></td>
+                <td class="text-center"><button class="btn btn-link text-danger text-decoration-none btn-sm" onclick="removerLinha(this)">Remover</button></td>
+            `;
+            tbody.appendChild(row);
+        }
+
+        function removerLinha(btn) {
+            btn.closest('tr').remove();
+            calcularMedia();
+            salvarDados();
+        }
+
+        function calcularMedia() {
+            const rows = document.querySelectorAll('#lista-disciplinas tr');
+            let totalPontos = 0;
+            let totalEcts = 0;
+
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const nota = parseFloat(inputs[1].value);
+                const ects = parseFloat(inputs[2].value);
+
+                if (!isNaN(nota) && !isNaN(ects) && ects > 0) {
+                    totalPontos += nota * ects;
+                    totalEcts += ects;
+                }
+            });
+
+            const display = document.getElementById('display-media');
+            const detalhes = document.getElementById('detalhes-ects');
+
+            if (totalEcts > 0) {
+                const media = (totalPontos / totalEcts).toFixed(3);
+                display.innerText = media;
+                detalhes.innerText = `Total ECTS: ${totalEcts}`;
+            } else {
+                display.innerText = "---";
+                detalhes.innerText = "Total ECTS: 0";
+            }
+        }
+
+        function salvarDados() {
+            const rows = document.querySelectorAll('#lista-disciplinas tr');
+            const dados = [];
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                dados.push({
+                    nome: inputs[0].value,
+                    nota: inputs[1].value,
+                    ects: inputs[2].value
+                });
+            });
+            localStorage.setItem('dados_calculadora', JSON.stringify(dados));
+        }
+
+        function carregarDados() {
+            const dados = JSON.parse(localStorage.getItem('dados_calculadora'));
+            if (dados && dados.length > 0) {
+                dados.forEach(d => adicionarLinha(d.nome, d.nota, d.ects));
+            }
+        }
+
+        function limparTudo() {
+            if(confirm("Deseja apagar todos os dados inseridos?")) {
+                document.getElementById('lista-disciplinas').innerHTML = '';
+                localStorage.removeItem('dados_calculadora');
+                adicionarLinha();
+                calcularMedia();
+            }
+        }
+
+        function abrirModalPremium() {
+            var myModal = new bootstrap.Modal(document.getElementById('modalPremium'));
+            myModal.show();
+        }
+        
+        function exportarCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Disciplina,Nota,ECTS\n";
+            const rows = document.querySelectorAll('#lista-disciplinas tr');
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const nome = inputs[0].value || "Disciplina";
+                const nota = inputs[1].value || "0";
+                const ects = inputs[2].value || "0";
+                csvContent += `${nome},${nota},${ects}\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "minhas_notas.csv");
+            document.body.appendChild(link);
+            link.click();
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
