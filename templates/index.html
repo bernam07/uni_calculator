@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Média IPCA Online</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    </head>
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                
+                <div class="alert alert-secondary text-center">
+                    Espaço para Banner de Publicidade (Top)
+                </div>
+
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3>🎓 Calculadora IPCA Online</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Faz upload do teu PDF de notas ("Consulta de Notas") e descobre a tua média instantaneamente.</p>
+                        
+                        <form method="post" enctype="multipart/form-data" class="mb-4">
+                            <div class="mb-3">
+                                <input type="file" name="pdf_file" class="form-control" accept=".pdf" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">Calcular Média Agora</button>
+                        </form>
+
+                        {% if media %}
+                        <div class="alert alert-success text-center">
+                            <h1>Média: {{ media }}</h1>
+                            <p>Baseado em {{ disciplines|length }} disciplinas aprovadas.</p>
+                        </div>
+
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Disciplina</th>
+                                    <th>Nota</th>
+                                    <th>ECTS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for d in disciplinas %}
+                                <tr>
+                                    <td>{{ d.disciplina }}</td>
+                                    <td>{{ d.nota }}</td>
+                                    <td>{{ d.ects }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="alert alert-secondary text-center mt-3">
+                    Espaço para Banner de Publicidade (Bottom)
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
